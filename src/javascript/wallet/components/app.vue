@@ -30,8 +30,8 @@ export default {
   },
   methods: {
     handleClick(tab, event) {
-      this.$emit("on-tab-change", this.activeName);
-      this.$refs.abc.created();
+      this.$emit("on-tab-change", this.activeName)
+      this.$refs.abc.created()
     },
   },
   props: ['newActiveName'],

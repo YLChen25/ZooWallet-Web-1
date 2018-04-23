@@ -1,9 +1,9 @@
 <template>
   <div>
     <el-table
-      :data="b"
-      border
+      :data="arry"
       style="width: 100%">
+      <h1 slot="empty">empty</h1>
       <el-table-column
         prop="index"
         label="Index"
@@ -25,8 +25,7 @@
       <el-table-column 
         prop="from"
         label="From"
-        align="center"
-        @row-click="print()">
+        align="center">
       </el-table-column>
       <el-table-column
         prop="to"
@@ -53,24 +52,27 @@
 </template>
 
 <script>
-  import axios from 'axios';
-  import {store} from "../store/store";
+  import axios from 'axios'
+  import {store} from "../store/store"
   export default {
+    slot(){
+      empty: "hi"
+    },
     data() {
       return {
-        b:[],
+        arry:[],
         account:'',
       }
     },
     methods:{
       created: function(){
-        var self = this;
-        //var address = this.getAddress();
-        var address = '0x33b8287511ac7F003902e83D642Be4603afCd876';
-        axios.get(`http://api.etherscan.io/api?module=account&action=txlist&address=${address}&startblock=0&endblock=99999999&sort=asc&apikey=YourApiKeyToken`)
+        var self = this
+        var address = this.getAddress()
+        var apiKeyToken = 'MEMJGJQEYX46UTTV7RSGUWAC4R8SCD5486'
+        axios.get(`http://api.etherscan.io/api?module=account&action=txlist&address=${address}&startblock=0&endblock=99999999&sort=asc&apikey=${apiKeyToken}`)
         .then(function (response) {
-            var block = response;
-            var a = [];
+            var block = response
+            var a = []
             for(var i=0 ; i < block.data.result.length; i++){    
                 a.push({
                   hash: block.data.result[i].hash,
@@ -82,69 +84,52 @@
                   gas: block.data.result[i].gasUsed,
                   gasprice: block.data.result[i].gasPrice,
                   index: i
-                });
-                self.setBlock(a,i);
+                })
+                self.setBlock(a,i)
             }
-          self.$data.b = a;  
-          console.log(a);
-          console.log(self.b);
+          self.$data.arry = a
+          console.log(a)
           })
         .catch(function (error) {
-          console.log(error);
+          console.log(error)
         });
       },  
       setBlock: function(block,i) {
-        block[i].timestamp = this.toDate(block[i].timestamp);
-        block[i].amount = this.amount(block[i].amount)+' ETH';   
-        block[i].status = this.transcationStatus(block[i].status);
-        block[i].gas = this.amount(block[i].gas*block[i].gasprice)+' ETH';
+        block[i].timestamp = this.toDate(block[i].timestamp)
+        block[i].amount = this.amount(block[i].amount)+' ETH'   
+        block[i].status = this.getTranscationStatus(block[i].status)
+        block[i].gas = this.amount(block[i].gas*block[i].gasprice)+' ETH'
       },
       toDate: function(unix_timestamp){
-        var a = new Date(unix_timestamp * 1000);
-        var months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-        var year = a.getFullYear();
-        var month = months[a.getMonth()];
-        var date = a.getDate();
-        var hour = a.getHours();
-        var min = a.getMinutes();
-        var sec = a.getSeconds();
-        var time = hour + ':' + min + ':' + sec + ' ' + month + '/' + date+ '/' + year ;
-        return time;
+        var a = new Date(unix_timestamp * 1000)
+        var months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec']
+        var year = a.getFullYear()
+        var month = months[a.getMonth()]
+        var date = a.getDate()
+        var hour = a.getHours()
+        var min = a.getMinutes()
+        var sec = a.getSeconds()
+        var time = hour + ':' + min + ':' + sec + ' ' + month + '/' + date+ '/' + year 
+        return time
       },
       amount: function(init_value){
-        var value = (init_value/1e18);
-        return value;
+        var value = (init_value/1e18)
+        return value
       },
-      transcationStatus: function(txreceipt_status){
-        var status;
+      getTranscationStatus: function(txreceipt_status){
+        var status
         if(txreceipt_status === '1'){
-          status = 'confirmed';
+          status = 'confirmed'
         } else if(txreceipt_status === '0'){
-          status = 'rejected';
+          status = 'rejected'
         } else{
-          status = 'pending';
+          status = 'pending'
         }
-        return status;
+        return status
       },
       getAddress: function(){
-        if (store.state.web3.eth.accounts[0] === undefined) {
-          this.$alert('Please unlock your MetaMask.', 'Notice', {
-            confirmButtonText: 'Enter',
-            callback: action => {
-              // this.$message({
-              //   type: 'info',
-              //   message: `action: ${ action }`
-              // });
-            }
-          })
-        } else {
-          this.account = store.state.web3.eth.accounts[0]
-          store.commit("updateAccount")
-          return this.account;
-        }
-      },
-      print: function(){
-        console.log('hi');
+        this.account = store.state.web3.eth.accounts[0]
+        return this.account
       }
     }         
   }    
