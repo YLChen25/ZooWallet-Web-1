@@ -2,7 +2,7 @@
   <div class="wallet_body col-10">
     <el-tabs v-model="activeName" @tab-click="handleClick">
       <el-tab-pane label="Send" name="first">Send</el-tab-pane>
-      <el-tab-pane label="Transactions" name="second">Transactions</el-tab-pane>
+      <el-tab-pane label="Transactions" name="second"><transactions ref="abc" /></el-tab-pane>
       <el-tab-pane label="Contract" name="third"><contract></contract></el-tab-pane>
       <el-tab-pane label="Market" name="fourth">Market information</el-tab-pane>
       <el-tab-pane label="Exchange" name="fifth">Exchange</el-tab-pane>
@@ -15,9 +15,13 @@ import ifetch from "jsappbase/ifetch"
 import _ from "lodash"
 import Cookies from 'js-cookie'
 import Contract from './contract.vue'
+import Transactions from './transactions.vue'
 
 export default {
-  components: {Contract},
+  components: {
+    Contract,
+    Transactions,
+  },
   data() {
     return {
       // activeName decides which tab is open
@@ -26,7 +30,8 @@ export default {
   },
   methods: {
     handleClick(tab, event) {
-      this.$emit("on-tab-change", this.activeName)
+      this.$emit("on-tab-change", this.activeName);
+      this.$refs.abc.created();
     },
   },
   props: ['newActiveName'],
