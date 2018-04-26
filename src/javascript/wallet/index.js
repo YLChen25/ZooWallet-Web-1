@@ -5,10 +5,12 @@ import Navbar from './components/navbar.vue'
 import Sidebar from './components/sidebar.vue'
 import {store} from './store/store'
 import BootstrapVue from 'bootstrap-vue'
+import ElSearchTablePagination from 'el-search-table-pagination'
 
 require("jsappbase/vuebase.js")
 Vue.use(Vuex)
 Vue.use(BootstrapVue)
+Vue.use(ElSearchTablePagination)
 
 new Vue({
   el: "#app",
