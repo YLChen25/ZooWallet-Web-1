@@ -1,10 +1,13 @@
 <template>
-  <el-search-table-pagination
-    type="local"
-    :data="tableData"
-    :columns="columns"
-    :formOptions="formOptions">
-  </el-search-table-pagination>
+  <div>
+    <el-search-table-pagination
+      type="local"
+      :data="tableData"
+      :columns="columns"
+      :formOptions="formOptions"
+      :empty-text="myText">
+    </el-search-table-pagination>         
+  </div>
 </template>
 
 <script>
@@ -19,7 +22,7 @@
           forms: [
             { prop: 'hash', label: 'Hash' },
             { prop: 'from', label: 'From' },
-            { prop: 'to', label: 'To'}
+            { prop: 'to', label: 'To' }
           ]
         },
         columns: [
@@ -32,15 +35,18 @@
           { prop: 'status', label: 'Status', width: 160 , align: 'center'},
           { prop: 'gas', label: 'Fee', width: 200 , align: 'center'},          
         ],
+        Slots: [
+
+        ],
         tableData:[],
-        account:''
+        account:'',
+        myText: 'Oops! No transactions yet!'
       }
     },
     methods:{
       created(){
         var self = this
-        //var address = this.getAddress()
-        var address = '0x7eaebccdfe7e2e997a23c855f0ccd996d71301a0'
+        var address = this.getAddress()
         var apiKeyToken = 'MEMJGJQEYX46UTTV7RSGUWAC4R8SCD5486'
         axios.get(`http://api.etherscan.io/api?module=account&action=txlist&address=${address}&startblock=0&endblock=99999999&sort=asc&apikey=${apiKeyToken}`)
         .then(function (response) {
@@ -112,3 +118,8 @@
     }
   }
 </script>
+<style>
+  .el-pagination{
+    text-align: left;
+  }
+</style>
