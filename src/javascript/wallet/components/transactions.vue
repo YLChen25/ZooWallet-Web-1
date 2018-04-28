@@ -3,7 +3,7 @@
     <el-search-table-pagination
       type="local"
       :data="tableData"
-      :columns="columns"
+      :columns="columns" 
       :formOptions="formOptions"
       :empty-text="myText">
     </el-search-table-pagination>         
@@ -44,7 +44,7 @@
       }
     },
     methods:{
-      created(){
+      created() {
         const self = this
         const address = store.state.web3.eth.accounts[0]
         const apiKeyToken = 'MEMJGJQEYX46UTTV7RSGUWAC4R8SCD5486'
@@ -76,11 +76,11 @@
       },  
       setBlock(block, i) {
         block[i].timestamp = this.toDate(block[i].timestamp)
-        block[i].amount = this.amount(block[i].amount) + ' ETH'   
+        block[i].amount = this.weiToEth(block[i].amount) + ' ETH'   
         block[i].status = this.getTranscationStatus(block[i].status)
         block[i].gas = this.weiToEth(block[i].gas*block[i].gasprice)+' ETH'
       },
-      toDate(unix_timestamp){
+      toDate(unix_timestamp) {
         var a = new Date(unix_timestamp * 1000)
         var months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec']
         var year = a.getFullYear()
@@ -92,11 +92,11 @@
         var time = hour + ':' + min + ':' + sec + ' ' + month + '/' + date+ '/' + year 
         return time
       },
-      weiToEth(init_value){
+      weiToEth(init_value) {
         var value = (init_value/1e18)
         return value
       },
-      getTranscationStatus(txreceipt_status){
+      getTranscationStatus(txreceipt_status) {
         var status
         if(txreceipt_status === '1'){
           status = 'confirmed'
