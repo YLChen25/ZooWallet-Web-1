@@ -45,41 +45,40 @@
     },
     methods:{
       created(){
-        var self = this
-        var address = this.getAddress()
-        var apiKeyToken = 'MEMJGJQEYX46UTTV7RSGUWAC4R8SCD5486'
+        const self = this
+        const address = store.state.web3.eth.accounts[0]
+        const apiKeyToken = 'MEMJGJQEYX46UTTV7RSGUWAC4R8SCD5486'
         axios.get(`http://api.etherscan.io/api?module=account&action=txlist&address=${address}&startblock=0&endblock=99999999&sort=asc&apikey=${apiKeyToken}`)
         .then(function (response) {
             var block = response
             var a = []
-            for(var i=0 ; i < block.data.result.length; i++){    
-                a.push({
-                  hash: block.data.result[i].hash,
-                  timestamp: block.data.result[i].timeStamp,
-                  from: block.data.result[i].from,
-                  to: block.data.result[i].to,
-                  amount: block.data.result[i].value ,
-                  status: block.data.result[i].txreceipt_status,
-                  gas: block.data.result[i].gasUsed,
-                  gasprice: block.data.result[i].gasPrice,
-                  index: i+1
-                })
-                self.setBlock(a,i)
+            for(var i = 0; i < block.data.result.length; i++){    
+              a.push({
+                hash: block.data.result[i].hash,
+                timestamp: block.data.result[i].timeStamp,
+                from: block.data.result[i].from,
+                to: block.data.result[i].to,
+                amount: block.data.result[i].value ,
+                status: block.data.result[i].txreceipt_status,
+                gas: block.data.result[i].gasUsed,
+                gasprice: block.data.result[i].gasPrice,
+                index: i+1
+              })
+              self.setBlock(a,i)
             }
           self.$data.tableData = a
           console.log(a)
           console.log(self.tableData)
-          self.getData()
           })
         .catch(function (error) {
           console.log(error)
         });
       },  
-      setBlock(block,i) {
+      setBlock(block, i) {
         block[i].timestamp = this.toDate(block[i].timestamp)
-        block[i].amount = this.amount(block[i].amount)+' ETH'   
+        block[i].amount = this.amount(block[i].amount) + ' ETH'   
         block[i].status = this.getTranscationStatus(block[i].status)
-        block[i].gas = this.amount(block[i].gas*block[i].gasprice)+' ETH'
+        block[i].gas = this.weiToEth(block[i].gas*block[i].gasprice)+' ETH'
       },
       toDate(unix_timestamp){
         var a = new Date(unix_timestamp * 1000)
@@ -93,7 +92,7 @@
         var time = hour + ':' + min + ':' + sec + ' ' + month + '/' + date+ '/' + year 
         return time
       },
-      amount(init_value){
+      weiToEth(init_value){
         var value = (init_value/1e18)
         return value
       },
@@ -108,13 +107,6 @@
         }
         return status
       },
-      getAddress(){
-        this.account = store.state.web3.eth.accounts[0]
-        return this.account
-      },
-      getData(){
-        this.dataTotalCount = this.tableData.length
-      }
     }
   }
 </script>
